@@ -42,7 +42,7 @@ pub mod hero {
 }
 
 pub mod rail {
-    pub const HEADING_TO_TILES: f32 = 38.0;
+    pub const HEADING_TO_TILES: f32 = 34.0;
     pub const HEADING_LOGO_HEIGHT: f32 = 32.0;
     pub const HEADING_LOGO_TO_TILES: f32 = HEADING_LOGO_HEIGHT + 14.0;
     pub const TILE_GAP: f32 = 32.0;
