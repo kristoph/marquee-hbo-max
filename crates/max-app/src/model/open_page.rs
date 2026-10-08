@@ -108,28 +108,18 @@ impl OpenPage {
 
 #[cfg(test)]
 mod tests {
-    use max_api::cms::{Layout, TileDetail};
+    use max_api::cms::Layout;
 
     use super::*;
-
-    fn tile(title: &str) -> ScreenTile {
-        ScreenTile {
-            title: title.to_string(),
-            route: None,
-            artwork: None,
-            logo: None,
-            badge_icon: None,
-            banner_icon: None,
-            detail: TileDetail::default(),
-        }
-    }
 
     fn page(tiles_per_row: &[usize]) -> OpenPage {
         let mut page = OpenPage::empty(Selection::FIRST);
         page.rows = tiles_per_row
             .iter()
             .enumerate()
-            .map(|(row, count)| ScreenRow::untitled(row.to_string(), Layout::Poster, (0..*count).map(|column| tile(&column.to_string())).collect()))
+            .map(|(row, count)| {
+                ScreenRow::untitled(row.to_string(), Layout::Poster, (0..*count).map(|column| ScreenTile::titled(&column.to_string())).collect())
+            })
             .collect();
         page
     }

@@ -21,22 +21,10 @@ pub fn grid_lines(mut tiles: Vec<ScreenTile>, layout: Layout, width: f32) -> Vec
 
 #[cfg(test)]
 mod tests {
-    use max_api::cms::TileDetail;
-
     use super::*;
 
     fn tiles(count: usize) -> Vec<ScreenTile> {
-        (0..count)
-            .map(|number| ScreenTile {
-                title: number.to_string(),
-                route: None,
-                artwork: None,
-                logo: None,
-                badge_icon: None,
-                banner_icon: None,
-                detail: TileDetail::default(),
-            })
-            .collect()
+        (0..count).map(|number| ScreenTile::titled(&number.to_string())).collect()
     }
 
     #[test]

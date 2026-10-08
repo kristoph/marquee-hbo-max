@@ -25,6 +25,17 @@ impl ScreenTile {
     }
 }
 
+#[cfg(test)]
+impl ScreenTile {
+    pub fn titled(title: &str) -> Self {
+        Self { title: title.to_string(), ..Self::with(TileDetail::default()) }
+    }
+
+    pub fn with(detail: TileDetail) -> Self {
+        Self { title: String::new(), route: None, artwork: None, logo: None, badge_icon: None, banner_icon: None, detail }
+    }
+}
+
 pub struct RankNumeral {
     pub plain: Option<LazyImage>,
     pub selected: Option<LazyImage>,

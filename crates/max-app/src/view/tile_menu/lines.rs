@@ -90,8 +90,7 @@ mod tests {
     use super::*;
 
     fn tile(menu: Vec<MenuAction>, progress: Option<f32>) -> ScreenTile {
-        let detail = TileDetail { menu, progress, ..TileDetail::default() };
-        ScreenTile { title: String::new(), route: None, artwork: None, logo: None, badge_icon: None, banner_icon: None, detail }
+        ScreenTile::with(TileDetail { menu, progress, ..TileDetail::default() })
     }
 
     fn go(label: &str, context: &str) -> MenuAction {

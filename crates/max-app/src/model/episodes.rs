@@ -44,8 +44,7 @@ mod tests {
     use super::*;
 
     fn episode(season: u32, number: u32) -> ScreenTile {
-        let detail = TileDetail { season_and_episode: Some((season, number)), ..TileDetail::default() };
-        ScreenTile { title: String::new(), route: None, artwork: None, logo: None, badge_icon: None, banner_icon: None, detail }
+        ScreenTile::with(TileDetail { season_and_episode: Some((season, number)), ..TileDetail::default() })
     }
 
     fn season(label: &str) -> Filter {
