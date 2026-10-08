@@ -2,7 +2,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use max_api::{
     cms::{artwork_wanted, Page},
-    workspace,
+    storage,
 };
 use max_media::images::{cache_size, ImageCache};
 
@@ -14,7 +14,7 @@ pub fn fetch(page: &Page) {
     let tiles_without_artwork: usize = page.rows.iter().map(|row| row.tiles.iter().filter(|tile| tile.artwork(row.layout()).is_none()).count()).sum();
 
     let failed = AtomicUsize::new(0);
-    ImageCache::new(workspace::image_cache()).fetch_each(&wanted, |_, result| {
+    ImageCache::new(storage::image_cache()).fetch_each(&wanted, |_, result| {
         if let Err(error) = result {
             if failed.fetch_add(1, Ordering::Relaxed) < FAILURES_SHOWN {
                 eprintln!("image failed: {error}");
@@ -25,6 +25,6 @@ pub fn fetch(page: &Page) {
         "\nArtwork: {tiles} tiles, {} distinct images, {} failed, {tiles_without_artwork} tiles without artwork; cache is {} KB",
         wanted.len(),
         failed.load(Ordering::Relaxed),
-        cache_size(workspace::image_cache()) / 1024,
+        cache_size(storage::image_cache()) / 1024,
     );
 }

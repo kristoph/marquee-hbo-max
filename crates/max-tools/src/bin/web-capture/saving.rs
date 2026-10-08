@@ -2,7 +2,7 @@ use std::{fs, io::Write, os::unix::fs::OpenOptionsExt};
 
 use max_api::{
     session::{Session, WebCookie},
-    workspace,
+    storage, workspace,
 };
 use serde_json::Value;
 use wry::WebView;
@@ -44,5 +44,5 @@ pub fn save_session(web_view: &WebView) -> Result<(), Failure> {
             http_only: cookie.http_only().unwrap_or(false),
         })
         .collect();
-    Ok(Session::from_web_player(home_url, headers, cookies)?.save(workspace::session())?)
+    Ok(Session::from_web_player(home_url, headers, cookies)?.save(storage::session())?)
 }

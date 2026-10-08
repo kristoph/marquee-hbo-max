@@ -4,6 +4,7 @@ mod error;
 pub mod net;
 pub mod playback;
 pub mod session;
+pub mod storage;
 pub mod workspace;
 
 pub use error::Error;

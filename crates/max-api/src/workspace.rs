@@ -1,4 +1,4 @@
-//! Where the project keeps what it saves between runs, wherever a program is started from.
+//! Where the project's own files are, for the tools a developer runs from a checkout.
 
 use std::path::PathBuf;
 
@@ -8,14 +8,6 @@ pub fn file(relative: &str) -> PathBuf {
     PathBuf::from(ROOT).join(relative)
 }
 
-pub fn session() -> PathBuf {
-    file("capture/session.json")
-}
-
 pub fn capture(name: &str) -> PathBuf {
     file("capture").join(format!("{name}.json"))
-}
-
-pub fn image_cache() -> PathBuf {
-    file("cache/images")
 }

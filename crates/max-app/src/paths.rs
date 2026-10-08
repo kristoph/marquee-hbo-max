@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
+pub use max_api::storage::session;
 use max_api::workspace;
-pub use max_api::workspace::session;
 
 const HOME_CAPTURE: &str = "routes-home";
 const NAVIGATION_MENU_CAPTURE: &str = "navigation-menu";

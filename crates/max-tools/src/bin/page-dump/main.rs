@@ -7,7 +7,7 @@ use std::process::ExitCode;
 
 use max_api::{
     client::{captured_page, Client},
-    workspace,
+    storage,
 };
 
 type Failure = Box<dyn std::error::Error + Send + Sync>;
@@ -24,7 +24,7 @@ fn main() -> ExitCode {
 
 fn run() -> Result<(), Failure> {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    let client = || Client::open(workspace::session());
+    let client = || Client::open(storage::session());
     match Command::parse(&arguments)? {
         Command::Help => print!("{}", command::USAGE),
         Command::Captured { file, images } => show(&captured_page(file)?, false, images),
