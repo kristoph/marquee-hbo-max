@@ -1,6 +1,7 @@
 use std::{
     fs,
     path::{Path, PathBuf},
+    process,
     sync::atomic::{AtomicUsize, Ordering},
     thread,
 };
@@ -56,11 +57,14 @@ impl ImageCache {
 }
 
 /// Writes under another name first, so a partial file is never mistaken for a finished one.
+/// The other name is the writer's own: two writers of the same file must not share it, or
+/// the first to finish takes it from under the second.
 pub(super) fn write_whole(path: &Path, write: impl FnOnce(&Path) -> Result<(), Error>) -> Result<(), Error> {
+    static WRITERS: AtomicUsize = AtomicUsize::new(0);
     if let Some(folder) = path.parent() {
         fs::create_dir_all(folder)?;
     }
-    let partial = path.with_extension("part");
+    let partial = path.with_extension(format!("part-{}-{}", process::id(), WRITERS.fetch_add(1, Ordering::Relaxed)));
     write(&partial)?;
     fs::rename(&partial, path)?;
     Ok(())
@@ -95,5 +99,17 @@ mod tests {
         assert_eq!(resized_url("https://i.example/a.png", 600), "https://i.example/a.png?f=webp&w=600");
         assert!(is_webp(b"RIFF\x10\x00\x00\x00WEBPVP8 "));
         assert!(!is_webp(b"{\"errors\":[{\"status\":\"400\"}]}"));
+    }
+
+    #[test]
+    fn two_writers_of_one_file_both_finish() {
+        let path = std::env::temp_dir().join(format!("max-media-test-{}", process::id())).join("picture.webp");
+        let overtaken_by_a_second_writer = |partial: &Path| {
+            fs::write(partial, b"first")?;
+            write_whole(&path, |other_partial| Ok(fs::write(other_partial, b"second")?))
+        };
+        write_whole(&path, overtaken_by_a_second_writer).unwrap();
+        assert_eq!(fs::read(&path).unwrap(), b"first");
+        fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
 }
