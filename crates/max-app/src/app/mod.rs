@@ -22,6 +22,7 @@ use max_media::images::OpaqueBounds;
 pub use navigation::Navigation;
 
 use crate::{
+    app_menu,
     developer::DeveloperTools,
     hero::HeroState,
     intent::TileMenu,
@@ -68,6 +69,7 @@ impl App {
         let ctx = &creation_context.egui_ctx;
         egui_extras::install_image_loaders(ctx);
         theme::install_fonts(ctx);
+        app_menu::adopt();
         ctx.set_visuals(egui::Visuals::dark());
         if start.background_position.is_none() {
             ctx.send_viewport_cmd(egui::ViewportCommand::Focus);

@@ -1,4 +1,5 @@
 mod app;
+mod app_menu;
 mod artwork;
 mod developer;
 mod hero;
