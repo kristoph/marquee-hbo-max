@@ -2,6 +2,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde_json::{json, Value};
 
+use super::sections::{Section, SectionKind};
 use crate::{
     client::{Body, Client},
     cms::PlayableVideo,
@@ -9,7 +10,6 @@ use crate::{
 };
 
 const MAIN_VIDEO: &str = "main";
-const END_CREDITS: &str = "end-credits";
 
 /// What the service is told, along with the position, while a title plays: this is what keeps
 /// Continue Watching and resuming in step with what was watched.
@@ -27,18 +27,14 @@ pub(super) fn main_video(playback_answer: &Value) -> Option<&Value> {
 }
 
 impl Watching {
-    /// Times in the playback answer count from the start of the unprotected opening; the
-    /// service wants them counted from the start of the title itself.
-    pub(super) fn of(video: PlayableVideo, session_ids: &SessionIds, playback_answer: &Value) -> Option<Self> {
-        let main = main_video(playback_answer)?;
-        let start = main["start"].as_f64().unwrap_or(0.0);
-        let credits = main["annotations"].as_array().into_iter().flatten().rfind(|annotation| annotation["type"] == END_CREDITS);
+    pub(super) fn of(video: PlayableVideo, session_ids: &SessionIds, main_video: &Value, sections: &[Section]) -> Option<Self> {
+        let credits = sections.iter().rfind(|section| section.kind == SectionKind::Credits);
         Some(Self {
             video,
             playback_session_id: session_ids.playback.clone(),
             application_session_id: session_ids.application.clone(),
-            runtime_seconds: main["duration"].as_f64()?,
-            credits_start_seconds: credits.and_then(|credits| credits["start"].as_f64()).map(|credits_start| credits_start - start),
+            runtime_seconds: main_video["duration"].as_f64()?,
+            credits_start_seconds: credits.map(|credits| credits.start_seconds),
         })
     }
 
@@ -76,7 +72,7 @@ impl Client {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{super::sections::sections_of, *};
 
     fn watching() -> Watching {
         let video = PlayableVideo {
@@ -93,9 +89,10 @@ mod tests {
         let answer = json!({"videos": [
             {"type": "promo", "start": 0, "duration": 14.0},
             {"type": "main", "start": 14.0, "duration": 7760.5,
-             "annotations": [{"type": "end-credits", "start": 7156.0}, {"type": "end-credits", "start": 7291.5}]}
+             "annotations": [{"type": "end-credits", "start": 7156.0, "end": 7200.0}, {"type": "end-credits", "start": 7291.5, "end": 7700.0}]}
         ]});
-        Watching::of(video, &SessionIds { playback: "p".to_string(), application: "a".to_string() }, &answer).unwrap()
+        let main = main_video(&answer).unwrap();
+        Watching::of(video, &SessionIds { playback: "p".to_string(), application: "a".to_string() }, main, &sections_of(main)).unwrap()
     }
 
     #[test]

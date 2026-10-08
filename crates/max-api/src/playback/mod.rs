@@ -25,6 +25,8 @@ use crate::{
     net, Error,
 };
 
+const DESCRIPTION_MISSING: Error = Error::Lacks("a description of the title");
+
 pub struct FairPlay {
     pub certificate: Vec<u8>,
     pub licence_url: String,
@@ -51,6 +53,8 @@ impl Client {
         let (certificate_url, licence_url) =
             fairplay["certificateUrl"].as_str().zip(fairplay["licenseUrl"].as_str()).ok_or(Error::Lacks("a FairPlay licence for this title"))?;
         let manifest_url = answer["manifest"]["url"].as_str().ok_or(Error::Lacks("a manifest"))?;
+        let main_video = progress::main_video(&answer).ok_or(DESCRIPTION_MISSING)?;
+        let sections = sections::sections_of(main_video);
         let (playlists, certificate) = thread::scope(|scope| {
             let certificate = scope.spawn(|| net::bytes(certificate_url));
             let playlists = net::text(manifest_url).and_then(|manifest| playlists::write(&manifest::feature(&manifest, manifest_url)?));
@@ -59,8 +63,8 @@ impl Client {
         Ok(TitlePlayback {
             playlists: playlists?,
             fairplay: FairPlay { certificate: certificate?, licence_url: licence_url.to_string() },
-            watching: Watching::of(video, &session_ids, &answer).ok_or(Error::Lacks("a description of the title"))?,
-            sections: progress::main_video(&answer).map(sections::sections_of).unwrap_or_default(),
+            watching: Watching::of(video, &session_ids, main_video, &sections).ok_or(DESCRIPTION_MISSING)?,
+            sections,
             start_seconds,
         })
     }
