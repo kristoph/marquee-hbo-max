@@ -11,9 +11,8 @@ use objc2::{
 };
 use objc2_foundation::{NSArray, NSPoint, NSRect, NSSize, NSString};
 
-use crate::view::about::PARAGRAPHS;
+use crate::{view::about::PARAGRAPHS, APP_NAME};
 
-const APP_NAME: &str = "HBO Max";
 const ICON_SIZE: f64 = 72.0;
 const TEXT_WIDTH: f64 = 400.0;
 const MARGIN: f64 = 28.0;
@@ -78,7 +77,7 @@ pub fn adopt() {
     }
 }
 
-/// "About max" becomes "About HBO Max"; items that do not end in the program's name are kept.
+/// "About max" becomes "About Marquee for HBO Max"; items that do not end in the program's name are kept.
 fn renamed(title: &str, program: &str) -> String {
     match title.strip_suffix(program) {
         Some(action) if action.ends_with(' ') => format!("{action}{APP_NAME}"),
@@ -168,8 +167,8 @@ mod tests {
 
     #[test]
     fn items_named_after_the_program_take_the_apps_name() {
-        assert_eq!(renamed("About max", "max"), "About HBO Max");
-        assert_eq!(renamed("Quit max", "max"), "Quit HBO Max");
+        assert_eq!(renamed("About max", "max"), "About Marquee for HBO Max");
+        assert_eq!(renamed("Quit max", "max"), "Quit Marquee for HBO Max");
     }
 
     #[test]

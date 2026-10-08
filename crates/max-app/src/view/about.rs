@@ -7,9 +7,9 @@ use crate::{
     theme::{bold, regular, DIM_TEXT, PANEL, TEXT},
 };
 
-const HEADING: &str = "About";
+const HEADING: &str = "About Marquee for HBO Max";
 pub const PARAGRAPHS: [&str; 3] = [
-    "This app is an independent effort by Kristoph Cichocki-Romanov (hello@kristoph.net).",
+    "Marquee for HBO Max is an independent effort by Kristoph Cichocki-Romanov (hello@kristoph.net).",
     "It is not affiliated with, endorsed by or sponsored by Skydance Corporation, Warner Bros. Discovery, Inc. or Home Box Office, Inc.",
     "HBO® and HBO Max® are registered trademarks of Home Box Office, Inc. Skydance™ and Warner Bros.™ are trademarks of their respective owners.",
 ];

@@ -29,7 +29,7 @@ use crate::{app::App, start::Start};
 /// What the app itself can fail at is only ever reported, never told apart.
 type Failure = Box<dyn std::error::Error + Send + Sync>;
 
-const WINDOW_TITLE: &str = "HBO Max";
+const APP_NAME: &str = "Marquee for HBO Max";
 const ICON: &[u8] = include_bytes!("../assets/icon.png");
 const WINDOW_SIZE: [f32; 2] = [1600.0, 1000.0];
 /// Without a position the window can open on a secondary display.
@@ -47,7 +47,7 @@ fn main() -> eframe::Result {
     let viewport = ViewportBuilder::default()
         .with_inner_size(WINDOW_SIZE)
         .with_position(start.background_position.unwrap_or(WINDOW_POSITION))
-        .with_title(WINDOW_TITLE)
+        .with_title(APP_NAME)
         .with_icon(eframe::icon_data::from_png_bytes(ICON).expect("the icon built into the app is a PNG"))
         .with_transparent(true);
     let options = eframe::NativeOptions { viewport, ..Default::default() };
