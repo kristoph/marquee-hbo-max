@@ -20,6 +20,10 @@ impl App {
                     self.close_player();
                 }
                 Message::Row(row) => self.place_row(row),
+                Message::RowFailed { row, error } => {
+                    self.place_row(row);
+                    self.failed("Part of this page could not be loaded", &error);
+                }
                 Message::Episodes { show_id, season_number, loaded } => self.show_episodes(&show_id, season_number, loaded),
                 Message::TitlePlayback { title, prepared } => self.open_native_player(title, prepared),
                 Message::NextVideo { video_id, next } => self.offer_next_video(&video_id, next),

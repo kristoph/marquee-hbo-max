@@ -9,6 +9,7 @@ use std::{
 use eframe::egui;
 use max_api::{
     client::{captured_page, Client, HOME_ROUTE},
+    cms::Layout,
     Error,
 };
 
@@ -43,8 +44,7 @@ pub fn fetch_outstanding(outstanding: Outstanding, client: Option<&Client>, send
             scope.spawn(move || {
                 while let Some(pending) = rows.get(next_row.fetch_add(1, Ordering::Relaxed)) {
                     let mut builder = ScreenBuilder::new(true);
-                    let row = fetch_row(client, pending, &mut builder);
-                    let _ = sender.send(Message::Row(row));
+                    let _ = sender.send(fetch_row(client, pending, &mut builder));
                     ctx.request_repaint();
                     download(&builder.outstanding.downloads, ctx);
                 }
@@ -53,16 +53,14 @@ pub fn fetch_outstanding(outstanding: Outstanding, client: Option<&Client>, send
     });
 }
 
-fn fetch_row(client: Option<&Client>, pending: &PendingRow, builder: &mut ScreenBuilder) -> ScreenRow {
+/// A row that could not be fetched still answers for its place on the page, as an empty one.
+fn fetch_row(client: Option<&Client>, pending: &PendingRow, builder: &mut ScreenBuilder) -> Message {
     let fetched = client.ok_or(Error::SignedOut).and_then(|client| client.row(&pending.id, pending.mandatory_parameters.as_deref()));
-    let row = match fetched {
-        Ok(row) => builder.row(&row),
-        Err(error) => {
-            eprintln!("row {} failed: {error}", pending.id);
-            ScreenRow::untitled(String::new(), max_api::cms::Layout::Other, Vec::new())
-        }
-    };
-    ScreenRow { id: pending.id.clone(), pending: false, ..row }
+    let settled = |row: ScreenRow| ScreenRow { id: pending.id.clone(), pending: false, ..row };
+    match fetched {
+        Ok(row) => Message::Row(settled(builder.row(&row))),
+        Err(error) => Message::RowFailed { row: settled(ScreenRow::untitled(String::new(), Layout::Other, Vec::new())), error },
+    }
 }
 
 fn download(downloads: &[Download], ctx: &egui::Context) {

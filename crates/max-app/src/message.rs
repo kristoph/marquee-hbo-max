@@ -20,6 +20,7 @@ pub struct SearchResults {
 pub enum Message {
     Page { route: String, remember: bool, page: Result<ScreenPage, Error> },
     Row(ScreenRow),
+    RowFailed { row: ScreenRow, error: Error },
     Chrome(ScreenChrome),
     PlayRoute { title: String, route: Result<Option<String>, Error> },
     Preview { title: HeroTitle, files: Result<PreviewFiles, Error> },
