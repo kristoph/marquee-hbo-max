@@ -1,0 +1,63 @@
+mod channel;
+mod collection;
+mod menu;
+mod navigation;
+mod page;
+
+pub(super) const HOME_DOCUMENT: &str = r##"{
+  "data": {"type": "route", "id": "r1",
+           "relationships": {"target": {"data": {"type": "page", "id": "p1"}}}},
+  "included": [
+    {"type": "page", "id": "p1", "attributes": {"title": "Home"},
+     "relationships": {"items": {"data": [{"type": "pageItem", "id": "pi1"},
+                                          {"type": "pageItem", "id": "pi2"}]}}},
+    {"type": "pageItem", "id": "pi1",
+     "relationships": {"collection": {"data": {"type": "collection", "id": "c1"}}}},
+    {"type": "pageItem", "id": "pi2",
+     "relationships": {"collection": {"data": {"type": "collection", "id": "c2"}}}},
+    {"type": "collection", "id": "c1",
+     "attributes": {"title": "Picks", "alias": "picks",
+                    "component": {"id": "2-3", "templateId": "primary"}},
+     "relationships": {"items": {"data": [{"type": "collectionItem", "id": "ci1"},
+                                          {"type": "collectionItem", "id": "ci2"},
+                                          {"type": "collectionItem", "id": "gone"}]}}},
+    {"type": "collection", "id": "c2",
+     "attributes": {"title": "Later", "async": true, "component": {"id": "2-3"}}},
+    {"type": "collectionItem", "id": "ci1",
+     "relationships": {"show": {"data": {"type": "show", "id": "s1"}, "meta": {}},
+                       "badges": {"data": [{"type": "overlay", "id": "o1"}]},
+                       "userActions": {"data": [{"type": "userAction", "id": "a2"}, {"type": "userAction", "id": "a3"}]},
+                       "defaultAction": {"data": {"type": "userAction", "id": "a1"}}}},
+    {"type": "overlay", "id": "o1", "attributes": {"a11y": "", "label": "New Episode"},
+     "relationships": {"style": {"data": {"type": "style", "id": "st1"}}, "image": {"data": {"type": "image", "id": "bolt"}}}},
+    {"type": "style", "id": "st1", "attributes": {"backgroundColor": "#BA236CFF", "fontColor": "#FFFFFFFF"}},
+    {"type": "image", "id": "bolt",
+     "attributes": {"kind": "default", "src": "https://img.example/bolt.png", "width": 88, "height": 136}},
+    {"type": "userAction", "id": "a2",
+     "attributes": {"context": "resume",
+                    "elements": {"label": {"label": "Resume"}, "progress": {"percentComplete": 0.62, "variant": "secondary"}}},
+     "relationships": {"route": {"data": {"type": "route", "id": "r3"}}}},
+    {"type": "userAction", "id": "a3", "attributes": {"actionType": "toggle", "context": "myList"}},
+    {"type": "contentRating", "id": "cr1", "attributes": {"code": "TV-MA"}},
+    {"type": "collectionItem", "id": "ci2",
+     "relationships": {"view": {"data": {"type": "view", "id": "v1"}}}},
+    {"type": "show", "id": "s1", "attributes": {"name": "Some Show", "showType": "SERIES", "premiereDate": "2019-04-01T00:00:00Z"},
+     "relationships": {"routes": {"data": [{"type": "route", "id": "r2"}]},
+                       "seasons": {"data": [{"type": "season", "id": "se1"}, {"type": "season", "id": "se2"}]},
+                       "ratings": {"data": [{"type": "contentRating", "id": "cr1"}]},
+                       "images": {"data": [{"type": "image", "id": "i1"}, {"type": "image", "id": "i2"},
+                                           {"type": "image", "id": "i3"}, {"type": "image", "id": "i4"}]}}},
+    {"type": "image", "id": "i1",
+     "attributes": {"kind": "default", "src": "https://img.example/a.jpeg", "width": 3840, "height": 2160}},
+    {"type": "image", "id": "i2",
+     "attributes": {"kind": "poster-with-logo", "src": "https://img.example/b.jpeg", "width": 2560, "height": 3840}},
+    {"type": "image", "id": "i3",
+     "attributes": {"kind": "logo-centered", "src": "https://img.example/c.png", "width": 3000, "height": 3000}},
+    {"type": "image", "id": "i4", "attributes": {"kind": "cover-artwork", "width": 300, "height": 150}},
+    {"type": "view", "id": "v1", "attributes": {"fallbacks": {"title": "A View"}}},
+    {"type": "userAction", "id": "a1",
+     "relationships": {"route": {"data": {"type": "route", "id": "r3"}}}},
+    {"type": "route", "id": "r2", "attributes": {"url": "/show/s1"}},
+    {"type": "route", "id": "r3", "attributes": {"url": "/video/watch/x"}}
+  ]
+}"##;
