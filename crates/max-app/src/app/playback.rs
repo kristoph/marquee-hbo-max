@@ -1,7 +1,6 @@
 use std::{thread, time::Duration};
 
 use eframe::egui;
-use max_api::Error;
 
 use super::App;
 use crate::player::PendingPlayback;
@@ -26,8 +25,7 @@ impl App {
         let Some(client) = self.service.client() else { return fade.deliver(Arrival::Failed("Not signed in".to_string())) };
         let (sender, ctx) = (self.sender.clone(), ctx.clone());
         thread::spawn(move || {
-            let found = client.play_route(&route).and_then(|found| found.ok_or(Error::Lacks("anything to play")));
-            let _ = sender.send(Message::PlayRoute { title, route: found });
+            let _ = sender.send(Message::PlayRoute { title, route: client.play_route(&route) });
             ctx.request_repaint();
         });
     }

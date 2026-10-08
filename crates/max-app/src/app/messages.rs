@@ -9,7 +9,8 @@ impl App {
         while let Ok(message) = self.inbox.try_recv() {
             match message {
                 Message::Chrome(chrome) => self.chrome = chrome,
-                Message::PlayRoute { title, route: Ok(route) } => self.arrive(Arrival::Play { route, title }),
+                Message::PlayRoute { title, route: Ok(Some(route)) } => self.arrive(Arrival::Play { route, title }),
+                Message::PlayRoute { title, route: Ok(None) } => self.arrive(Arrival::Failed(format!("{title} has nothing to play yet"))),
                 Message::PlayRoute { title, route: Err(error) } => self.arrive_failing(&format!("Could not start {title}"), &error),
                 Message::AccountChangeFailed(error) => self.failed("That didn't go through", &error),
                 Message::SearchResults { query, results } => self.show_search_results(&query, results),

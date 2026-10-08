@@ -21,7 +21,7 @@ pub enum Message {
     Page { route: String, remember: bool, page: Result<ScreenPage, Error> },
     Row(ScreenRow),
     Chrome(ScreenChrome),
-    PlayRoute { title: String, route: Result<String, Error> },
+    PlayRoute { title: String, route: Result<Option<String>, Error> },
     Preview { title: HeroTitle, files: Result<PreviewFiles, Error> },
     SearchResults { query: SearchQuery, results: Result<SearchResults, Error> },
     AccountChangeFailed(Error),
