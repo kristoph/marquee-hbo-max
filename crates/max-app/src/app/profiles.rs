@@ -7,21 +7,8 @@ use super::App;
 use crate::{
     intent::ProfileRequest,
     message::Message,
-    model::{load_account, ScreenAccount},
+    model::{load_account, Chosen, ProfilePicker, ProfileSwitch, ScreenAccount},
 };
-
-pub struct PinEntry {
-    pub profile: usize,
-    pub digits: String,
-    pub focus_field: bool,
-}
-
-#[derive(Default)]
-pub struct ProfilePicker {
-    pub account: Option<ScreenAccount>,
-    pub pin_entry: Option<PinEntry>,
-    pub switching: bool,
-}
 
 impl App {
     pub(crate) fn handle_profile_request(&mut self, ctx: &egui::Context, request: ProfileRequest) {
@@ -59,31 +46,24 @@ impl App {
     }
 
     fn choose_profile(&mut self, ctx: &egui::Context, index: usize) {
-        let Some(picker) = &mut self.profile_picker else { return };
-        let Some(profile) = picker.account.as_ref().and_then(|account| account.account.profiles.get(index)) else { return };
-        if profile.selected {
-            self.profile_picker = None;
-        } else if profile.needs_pin {
-            picker.pin_entry = Some(PinEntry { profile: index, digits: String::new(), focus_field: true });
-        } else {
-            self.switch_profile(ctx, index, None);
+        match self.profile_picker.as_mut().and_then(|picker| picker.choose(index)) {
+            Some(Chosen::AlreadyInUse) => self.profile_picker = None,
+            Some(Chosen::Switch(switch)) => self.switch_profile(ctx, switch),
+            Some(Chosen::AsksForItsPin) | None => {}
         }
     }
 
     fn submit_pin(&mut self, ctx: &egui::Context) {
-        let Some(entry) = self.profile_picker.as_mut().and_then(|picker| picker.pin_entry.take()) else { return };
-        self.switch_profile(ctx, entry.profile, Some(entry.digits));
+        if let Some(switch) = self.profile_picker.as_mut().and_then(ProfilePicker::submit_pin) {
+            self.switch_profile(ctx, switch);
+        }
     }
 
-    fn switch_profile(&mut self, ctx: &egui::Context, index: usize, pin: Option<String>) {
+    fn switch_profile(&mut self, ctx: &egui::Context, switch: ProfileSwitch) {
         let Some(client) = self.service.client() else { return };
-        let Some(picker) = &mut self.profile_picker else { return };
-        let Some(account) = picker.account.as_ref().map(|account| account.account.clone()) else { return };
-        let Some(profile_id) = account.profiles.get(index).map(|profile| profile.id.clone()) else { return };
-        picker.switching = true;
         let (sender, ctx) = (self.sender.clone(), ctx.clone());
         thread::spawn(move || {
-            let switched = client.switch_profile(&account, &profile_id, pin.as_deref());
+            let switched = client.switch_profile(&switch.account, &switch.profile_id, switch.pin.as_deref());
             let _ = sender.send(Message::ProfileSwitched(switched));
             ctx.request_repaint();
         });

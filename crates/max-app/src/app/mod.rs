@@ -20,14 +20,13 @@ use std::{cell::RefCell, collections::HashMap, ffi::c_void, path::PathBuf, ptr::
 use eframe::egui;
 use max_media::images::OpaqueBounds;
 pub use navigation::Navigation;
-pub use profiles::{PinEntry, ProfilePicker};
 
 use crate::{
     developer::DeveloperTools,
     hero::HeroState,
     intent::TileMenu,
     message::Message,
-    model::{load_chrome, OpenPage, ScreenChrome},
+    model::{load_chrome, OpenPage, ProfilePicker, ScreenChrome},
     player::Playback,
     service::Service,
     signin::SignIn,

@@ -1,13 +1,12 @@
 use eframe::egui::{self, Align2, Color32, Id, Image, Key, Pos2, Rect, Sense, Stroke, StrokeKind, TextEdit, Vec2};
 
 use crate::{
-    app::{PinEntry, ProfilePicker},
     intent::{Intent, ProfileRequest},
     metrics::{
         profiles::{AVATAR, AVATAR_GAP, BUTTON_HEIGHT, NAME_TEXT, TITLE_TEXT},
         BODY_TEXT, MARGIN,
     },
-    model::ScreenAccount,
+    model::{PinEntry, ProfilePicker, ScreenAccount},
     paint::{cross, points_to_when_hovered},
     theme::{bold, regular, DIM_TEXT, PLACEHOLDER, TEXT, TRANSLUCENT},
 };
