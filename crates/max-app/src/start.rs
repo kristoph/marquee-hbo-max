@@ -24,7 +24,10 @@ max [options]
   --player <web|native>      which player opens a title; the P key switches while running
   --capture                  use the saved capture of the home page instead of the network
   --session <file>           keep the signed-in session in that file
+  --help-developer           list the options for checking the app without a person at it
+";
 
+pub const DEVELOPER_USAGE: &str = "\
 For checking the app without a person at it:
   --background <x>,<y>       open at that screen position without taking the keyboard
   --screenshot <file.png>    save a picture of the window once artwork has loaded

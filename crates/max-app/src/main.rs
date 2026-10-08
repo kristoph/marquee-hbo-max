@@ -36,8 +36,9 @@ const WINDOW_POSITION: [f32; 2] = [300.0, 120.0];
 
 fn main() -> eframe::Result {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
-    if arguments.iter().any(|argument| argument == "--help") {
-        print!("{}", start::USAGE);
+    let asked_for = |flag: &str| arguments.iter().any(|argument| argument == flag);
+    if asked_for("--help") || asked_for("--help-developer") {
+        print!("{}", if asked_for("--help") { start::USAGE } else { start::DEVELOPER_USAGE });
         return Ok(());
     }
     logging::start();
