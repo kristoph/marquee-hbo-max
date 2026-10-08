@@ -41,10 +41,10 @@ pub fn load_chrome(service: &Service) -> Result<ScreenChrome, Failure> {
 }
 
 pub fn prepare_image(source: &str, fetch_width: u32, size: Vec2) -> Option<String> {
-    let fetched = artwork::cache().fetch(source, fetch_width).map_err(|error| eprintln!("icon failed: {error}")).ok()?;
+    let fetched = artwork::cache().fetch(source, fetch_width).map_err(|error| log::warn!("icon failed: {error}")).ok()?;
     let pixels = size * IMAGE_PIXELS_PER_POINT;
     let scaled = scaled_copy(&fetched, pixels.x.round() as u32, pixels.y.round() as u32);
-    file_uri(&scaled.map_err(|error| eprintln!("icon failed: {error}")).unwrap_or(fetched))
+    file_uri(&scaled.map_err(|error| log::warn!("icon failed: {error}")).unwrap_or(fetched))
 }
 
 fn file_uri(path: &Path) -> Option<String> {

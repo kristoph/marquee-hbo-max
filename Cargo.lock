@@ -2476,6 +2476,7 @@ name = "max-api"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
+ "log",
  "serde",
  "serde_json",
  "thiserror 2.0.21",
@@ -2490,6 +2491,7 @@ dependencies = [
  "eframe",
  "egui_extras",
  "image",
+ "log",
  "max-api",
  "max-media",
  "objc2 0.6.5",
@@ -2507,6 +2509,7 @@ dependencies = [
  "block2 0.6.2",
  "dispatch2",
  "image",
+ "log",
  "max-api",
  "objc2 0.6.5",
  "objc2-av-foundation",

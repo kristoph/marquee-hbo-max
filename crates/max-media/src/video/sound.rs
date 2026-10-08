@@ -68,7 +68,7 @@ impl Clip {
             let started = objc2::exception::catch(std::panic::AssertUnwindSafe(|| sound.setRate_time_atHostTime(1.0, clip_time, clock_time)));
             match started {
                 Ok(()) => self.sound_started.set(true),
-                Err(exception) => eprintln!("preview sound could not start: {exception:?}"),
+                Err(exception) => log::warn!("preview sound could not start: {exception:?}"),
             }
         }
     }

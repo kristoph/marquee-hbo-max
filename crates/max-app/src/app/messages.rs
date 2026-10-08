@@ -16,7 +16,7 @@ impl App {
                 Message::SearchResults { query, results } => self.show_search_results(&query, results),
                 Message::Preview { title, files } => self.start_preview(title, files),
                 Message::PlayerLeft => {
-                    println!("PLAYER closed");
+                    log::info!("PLAYER closed");
                     self.close_player();
                 }
                 Message::Row(row) => self.place_row(row),

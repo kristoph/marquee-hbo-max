@@ -70,6 +70,6 @@ fn download(downloads: &[Download], ctx: &egui::Context) {
             downloads[index].mark_ready();
             ctx.request_repaint();
         }
-        Err(error) => eprintln!("image failed: {error}"),
+        Err(error) => log::warn!("image failed: {error}"),
     });
 }

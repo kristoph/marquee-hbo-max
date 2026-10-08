@@ -29,7 +29,7 @@ impl App {
         if !self.service.is_live() {
             return;
         }
-        println!("SESSION ended; asking to sign in again");
+        log::info!("SESSION ended; asking to sign in again");
         self.service = Service::SignedOut;
         self.clear_browsing();
         self.chrome = ScreenChrome::default();

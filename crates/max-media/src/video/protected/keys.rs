@@ -67,7 +67,7 @@ impl KeyDelegate {
                         awaited.processContentKeyResponse(&response);
                     }
                     Err(error) => {
-                        eprintln!("the key for the title could not be had: {error}");
+                        log::warn!("the key for the title could not be had: {error}");
                         awaited.processContentKeyResponseError(&NSError::errorWithDomain_code_userInfo(&NSString::from_str(ERROR_DOMAIN), 1, None));
                     }
                 }

@@ -4,6 +4,7 @@ mod developer;
 mod hero;
 mod intent;
 mod loading;
+mod logging;
 mod message;
 mod metrics;
 mod model;
@@ -39,6 +40,7 @@ fn main() -> eframe::Result {
         print!("{}", start::USAGE);
         return Ok(());
     }
+    logging::start();
     let start = Start::from_arguments(&arguments);
     let viewport = ViewportBuilder::default()
         .with_inner_size(WINDOW_SIZE)

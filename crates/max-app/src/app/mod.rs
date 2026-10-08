@@ -116,7 +116,7 @@ impl App {
         thread::spawn(move || {
             match load_chrome(&service) {
                 Ok(chrome) => drop(sender.send(Message::Chrome(chrome))),
-                Err(error) => eprintln!("header failed: {error}"),
+                Err(error) => log::warn!("header failed: {error}"),
             }
             ctx.request_repaint();
         });

@@ -32,7 +32,7 @@ impl Client {
         let mut chrome = Chrome::from_navigation_menu(&Document::parse(&self.get(&url)?)?);
         match self.selected_avatar() {
             Ok(avatar) => chrome.avatar = avatar,
-            Err(error) => eprintln!("profile picture failed: {error}"),
+            Err(error) => log::warn!("profile picture failed: {error}"),
         }
         Ok(chrome)
     }

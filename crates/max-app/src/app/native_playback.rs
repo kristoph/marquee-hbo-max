@@ -47,7 +47,7 @@ impl App {
         };
         match NativePlayer::open(client, title, playback, view, self.playback.sound) {
             Ok(player) => {
-                println!("NATIVE PLAYER opened");
+                log::info!("NATIVE PLAYER opened");
                 self.find_next_video(&player);
                 self.playback.native = Some(player);
                 // The video lies behind what the app draws, so the black of the transition must go.
@@ -70,19 +70,19 @@ impl App {
         let Some(player) = self.playback.native.as_mut().filter(|player| player.video_id() == video_id) else { return };
         match next {
             Ok(next) => player.next = next,
-            Err(error) => eprintln!("the next episode could not be found: {error}"),
+            Err(error) => log::warn!("the next episode could not be found: {error}"),
         }
     }
 
     fn native_player_failed(&mut self, reason: &str) {
-        println!("NATIVE PLAYER failed: {reason}");
+        log::info!("NATIVE PLAYER failed: {reason}");
         self.playback.native = None;
         self.say(format!("The native player could not play this: {reason}"));
         self.fade_in();
     }
 
     pub(crate) fn close_native_player(&mut self) {
-        println!("NATIVE PLAYER closed");
+        log::info!("NATIVE PLAYER closed");
         if let Some(player) = self.playback.native.take() {
             player.report_progress();
         }

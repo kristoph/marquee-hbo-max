@@ -47,7 +47,7 @@ impl SignIn {
                 }
             })
             .with_navigation_handler(|url| {
-                println!("SIGN-IN {}", web::without_query(&url));
+                log::info!("SIGN-IN {}", web::without_query(&url));
                 true
             })
             .build_as_child(frame)?;
@@ -65,7 +65,7 @@ impl SignIn {
         if self.load_at.is_some_and(|due| Instant::now() >= due) {
             self.load_at = None;
             if let Err(error) = self.view.load_url(SIGN_IN_URL) {
-                eprintln!("the sign-in page failed to load: {error}");
+                log::warn!("the sign-in page failed to load: {error}");
             }
             let _ = self.view.focus();
         }

@@ -39,10 +39,10 @@ impl Player {
             .with_initialization_script(extra_script.unwrap_or_default())
             .with_ipc_handler(move |request| match request.body().as_str() {
                 CLOSE_MESSAGE => on_close(),
-                message => println!("PLAYER SAYS {message}"),
+                message => log::info!("PLAYER SAYS {message}"),
             })
             .with_navigation_handler(|url| {
-                println!("PLAYER {}", web::without_query(&url));
+                log::info!("PLAYER {}", web::without_query(&url));
                 true
             })
             .build_as_child(frame)?;
@@ -71,7 +71,7 @@ impl Player {
             return;
         }
         if let Err(error) = self.view.load_url(&url) {
-            eprintln!("player failed to load: {error}");
+            log::warn!("player failed to load: {error}");
         }
         let _ = self.view.focus();
     }

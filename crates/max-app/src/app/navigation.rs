@@ -40,7 +40,7 @@ impl App {
                 Ok((page, outstanding)) => (Ok(page), outstanding),
                 Err(error) => (Err(error), Outstanding::default()),
             };
-            println!(
+            log::info!(
                 "LOAD {route} on screen after {:.1}s; {} rows and {} images to follow",
                 started.elapsed().as_secs_f32(),
                 outstanding.rows.len(),
@@ -49,7 +49,7 @@ impl App {
             let _ = sender.send(Message::Page { route: route.clone(), remember, page });
             ctx.request_repaint();
             fetch_outstanding(outstanding, service.client().as_deref(), &sender, &ctx);
-            println!("LOAD {route} complete after {:.1}s", started.elapsed().as_secs_f32());
+            log::info!("LOAD {route} complete after {:.1}s", started.elapsed().as_secs_f32());
         });
     }
 

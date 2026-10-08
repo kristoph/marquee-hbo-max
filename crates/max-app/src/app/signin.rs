@@ -27,12 +27,12 @@ impl App {
         self.chrome = ScreenChrome::default();
         self.fade = Some(Fade::starting(FadePhase::Black));
         if let Err(error) = fs::remove_file(&self.session_path) {
-            eprintln!("the saved session could not be removed: {error}");
+            log::warn!("the saved session could not be removed: {error}");
         }
         let (sender, ctx) = (self.sender.clone(), ctx.clone());
         thread::spawn(move || {
             if let Some(Err(error)) = client.map(|client| client.sign_out()) {
-                eprintln!("the service did not confirm signing out: {error}");
+                log::warn!("the service did not confirm signing out: {error}");
             }
             let _ = sender.send(Message::SignedOut);
             ctx.request_repaint();
@@ -46,7 +46,7 @@ impl App {
             repaint.request_repaint();
         });
         if let Err(error) = cleared {
-            eprintln!("web data could not be cleared: {error}");
+            log::warn!("web data could not be cleared: {error}");
             self.sign_in_wanted = true;
         }
     }
@@ -107,14 +107,14 @@ impl App {
         let session = match checked {
             Ok(session) => session,
             Err(reason) => {
-                println!("SIGN-IN not complete: {reason}");
+                log::info!("SIGN-IN not complete: {reason}");
                 return self.sign_in.iter_mut().for_each(SignIn::show_page_again);
             }
         };
         if let Err(error) = session.save(&self.session_path) {
-            eprintln!("the session could not be saved: {error}");
+            log::warn!("the session could not be saved: {error}");
         }
-        println!("SIGN-IN complete");
+        log::info!("SIGN-IN complete");
         self.sign_in = None;
         self.service = Service::Live(Arc::new(Client::new(session)));
         self.start_afresh(ctx, HOME_ROUTE);

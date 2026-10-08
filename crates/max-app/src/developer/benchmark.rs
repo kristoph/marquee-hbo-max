@@ -35,7 +35,7 @@ impl Benchmark {
         let gaps = std::mem::take(&mut self.milliseconds_between_frames);
         let slow = gaps.iter().filter(|gap| **gap > SLOW_FRAME_MILLISECONDS).count();
         let worst = gaps.iter().copied().fold(0.0, f32::max);
-        println!(
+        log::info!(
             "PERF frames={} cpu mean={mean:.1}ms p95={ninety_fifth:.1}ms max={:.1}ms | frame gaps over {SLOW_FRAME_MILLISECONDS}ms: {slow}, worst {worst:.0}ms | tiles drawn before their artwork: {tiles_drawn_before_their_artwork}",
             frames.len(),
             frames[frames.len() - 1],

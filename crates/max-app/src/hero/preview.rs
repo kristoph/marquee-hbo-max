@@ -98,7 +98,7 @@ impl App {
             }
             Ok(None) => PreviewStage::Unavailable,
             Err(reason) => {
-                eprintln!("preview failed: {reason}");
+                log::warn!("preview failed: {reason}");
                 PreviewStage::Unavailable
             }
         };

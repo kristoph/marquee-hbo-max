@@ -29,8 +29,8 @@ impl App {
         };
         let [width, height] = image.size;
         match image::save_buffer(&screenshot.path, image.as_raw(), width as u32, height as u32, image::ColorType::Rgba8) {
-            Ok(()) => println!("SCREENSHOT {}", screenshot.path),
-            Err(error) => eprintln!("screenshot failed: {error}"),
+            Ok(()) => log::info!("SCREENSHOT {}", screenshot.path),
+            Err(error) => log::warn!("screenshot failed: {error}"),
         }
         self.developer.screenshot = None;
     }

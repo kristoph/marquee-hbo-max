@@ -8,6 +8,7 @@ name = "max"
 path = "src/main.rs"
 
 [dependencies]
+log.workspace = true
 max-api.workspace = true
 max-media.workspace = true
 eframe.workspace = true

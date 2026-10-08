@@ -21,7 +21,7 @@ impl NativePlayer {
         let (client, watching) = (self.client.clone(), self.watching.clone());
         thread::spawn(move || {
             if let Err(error) = client.report_progress(&watching, position) {
-                eprintln!("progress could not be reported: {error}");
+                log::warn!("progress could not be reported: {error}");
             }
         });
     }
@@ -29,7 +29,7 @@ impl NativePlayer {
     pub fn log_progress_when_due(&mut self) {
         if self.progress_logged.elapsed() >= LOG_PROGRESS_EVERY {
             self.progress_logged = Instant::now();
-            println!("NATIVE PLAYER {}", self.progress_report());
+            log::debug!("NATIVE PLAYER {}", self.progress_report());
         }
     }
 

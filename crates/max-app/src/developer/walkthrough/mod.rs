@@ -50,13 +50,13 @@ impl App {
         let Some(started) = walkthrough.started else {
             if !busy && walkthrough.should_start(ctx) {
                 walkthrough.started = Some(Instant::now());
-                println!("WALKTHROUGH started");
+                log::info!("WALKTHROUGH started");
                 ctx.request_repaint();
             }
             return;
         };
         let Some(scheduled) = script::SCRIPT.get(walkthrough.next_step) else {
-            println!("WALKTHROUGH finished");
+            log::info!("WALKTHROUGH finished");
             self.developer.walkthrough = None;
             return;
         };
@@ -67,7 +67,7 @@ impl App {
         }
         let attempt = steps::Attempt { seconds_overdue: elapsed - scheduled.at_seconds, dry_run, busy };
         if self.perform(scheduled.step, attempt, intent) {
-            println!("WALKTHROUGH {elapsed:5.1}s step {step_number}");
+            log::info!("WALKTHROUGH {elapsed:5.1}s step {step_number}");
             if let Some(walkthrough) = &mut self.developer.walkthrough {
                 walkthrough.next_step += 1;
             }

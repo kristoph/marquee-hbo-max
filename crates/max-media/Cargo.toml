@@ -6,6 +6,7 @@ edition.workspace = true
 [dependencies]
 max-api.workspace = true
 image.workspace = true
+log.workspace = true
 thiserror.workspace = true
 
 [target.'cfg(target_os = "macos")'.dependencies]

@@ -45,7 +45,7 @@ impl Client {
             sleep(PAUSE_BETWEEN_ROWS);
             match self.row(&row.id, row.mandatory_parameters.as_deref()) {
                 Ok(fetched) => row.tiles = fetched.tiles,
-                Err(error) => eprintln!("row {:?} failed: {error}", row.title),
+                Err(error) => log::warn!("row {:?} failed: {error}", row.title),
             }
         }
     }
