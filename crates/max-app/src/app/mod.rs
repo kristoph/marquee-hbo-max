@@ -50,6 +50,7 @@ pub struct App {
     pub(crate) navigation: Navigation,
     pub(crate) hero: HeroState,
     pub(crate) browse_menu_open: bool,
+    pub(crate) about_open: bool,
     pub(crate) tile_menu: Option<TileMenu>,
     pub(crate) toast: Option<Toast>,
     pub(crate) profile_picker: Option<ProfilePicker>,
@@ -84,6 +85,7 @@ impl App {
             navigation: Navigation::starting_at(start.route.clone()),
             hero: HeroState::showing(hero_title),
             browse_menu_open: start.browse_menu_open,
+            about_open: start.about_open,
             tile_menu: None,
             toast: None,
             profile_picker: None,
@@ -127,6 +129,7 @@ impl App {
         self.navigation.history.clear();
         self.navigation.visited.clear();
         self.browse_menu_open = false;
+        self.about_open = false;
         self.tile_menu = None;
         self.profile_picker = None;
         self.playback.close();

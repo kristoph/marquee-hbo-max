@@ -71,6 +71,9 @@ impl App {
         let solid_header = self.page.scroll > HEADER_TURNS_SOLID_AFTER_SCROLLING || self.browse_menu_open;
         self.draw_header(ui, window, solid_header, intent);
         self.draw_tile_menu(ui, window, intent);
+        if self.about_open {
+            super::about::draw(ui, window, intent);
+        }
         self.draw_toast(ui, window);
 
         let selected_row_still_loading = self.page.rows.get(self.page.selected.row).is_some_and(|row| row.pending);

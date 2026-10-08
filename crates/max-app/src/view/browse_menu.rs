@@ -8,13 +8,15 @@ use crate::{
         MARGIN,
     },
     paint::points_to_when_hovered,
-    theme::{bold, regular, BROWSE_MENU, TEXT},
+    theme::{bold, regular, BROWSE_MENU, DIM_TEXT, TEXT},
 };
 
 const SCRIM: u8 = 150;
 const HOVERED_LINE: u8 = 22;
 const SPACE_ABOVE_LINES: f32 = 12.0;
 const LINE_TEXT: f32 = 20.0;
+const ABOUT: &str = "About";
+const ABOUT_TEXT: f32 = 17.0;
 
 impl App {
     pub(crate) fn draw_browse_menu(&self, ui: &mut egui::Ui, window: Rect, intent: &mut Intent) {
@@ -46,5 +48,23 @@ impl App {
                 }
             }
         }
+        draw_about_line(ui, panel, intent);
+    }
+}
+
+fn draw_about_line(ui: &mut egui::Ui, panel: Rect, intent: &mut Intent) {
+    let line = Rect::from_min_max(
+        Pos2::new(panel.left(), panel.bottom() - BROWSE_MENU_LINE - SPACE_ABOVE_LINES),
+        panel.max - Vec2::new(0.0, SPACE_ABOVE_LINES),
+    );
+    let response = ui.interact(line, Id::new("menu-about"), Sense::click());
+    points_to_when_hovered(ui, &response);
+    if response.hovered() {
+        ui.painter().rect_filled(line, 0.0, Color32::from_white_alpha(HOVERED_LINE));
+    }
+    let ink = if response.hovered() { TEXT } else { DIM_TEXT };
+    ui.painter().text(line.left_center() + Vec2::new(MARGIN, 0.0), Align2::LEFT_CENTER, ABOUT, regular(ABOUT_TEXT), ink);
+    if response.clicked() {
+        intent.about = Some(true);
     }
 }

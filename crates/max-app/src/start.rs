@@ -19,6 +19,7 @@ max [options]
   --route <route>            start on that page instead of home, for example /series
   --select <row>[,<column>]  start with that tile selected
   --menu                     start with the browse menu open
+  --about                    start with the About panel open
   --play <route>             play that title at once
   --mute                     start videos muted
   --player <web|native>      which player opens a title; the P key switches while running
@@ -50,6 +51,7 @@ pub struct Start {
     pub route: String,
     pub selected: Selection,
     pub browse_menu_open: bool,
+    pub about_open: bool,
     pub play: Option<String>,
     pub mute_player: bool,
     pub player_choice: PlayerChoice,
@@ -75,6 +77,7 @@ impl Start {
             route: value_of("--route").unwrap_or_else(|| HOME_ROUTE.to_string()),
             selected: value_of("--select").map(|text| selection(&text)).unwrap_or_default(),
             browse_menu_open: has("--menu"),
+            about_open: has("--about"),
             play: value_of("--play"),
             mute_player: has("--mute"),
             player_choice: value_of("--player").and_then(|name| PlayerChoice::named(&name)).unwrap_or_default(),

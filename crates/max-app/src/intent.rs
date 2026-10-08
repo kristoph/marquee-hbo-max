@@ -65,6 +65,7 @@ pub struct Intent {
     pub go: Option<Go>,
     pub select: Option<Selection>,
     pub browse_menu: Option<bool>,
+    pub about: Option<bool>,
     pub tab: Option<usize>,
     pub toggle_preview_sound: bool,
     pub hero_drag: f32,

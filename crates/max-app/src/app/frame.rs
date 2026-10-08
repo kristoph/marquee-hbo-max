@@ -90,6 +90,10 @@ impl App {
         if let Some(open) = intent.browse_menu {
             self.browse_menu_open = open;
         }
+        if let Some(open) = intent.about {
+            self.about_open = open;
+            self.browse_menu_open = false;
+        }
         if let Some(index) = intent.tab {
             self.open_tab(ctx, index);
         }
@@ -138,6 +142,7 @@ impl App {
             Go::Back if self.playback.web.is_some() => self.close_player(),
             Go::Back if self.playback.native.is_some() => self.leave_native_player_or_its_episodes(),
             Go::Back if self.profile_picker.is_some() => self.profile_picker = None,
+            Go::Back if self.about_open => self.about_open = false,
             Go::Back if self.browse_menu_open => self.browse_menu_open = false,
             Go::Back => self.go_back(ctx),
         }

@@ -26,7 +26,8 @@ impl App {
         if pressed(Key::Escape) || pressed(Key::Backspace) {
             intent.go = Some(Go::Back);
         }
-        let page_has_the_keys = !self.playback.is_open() && self.profile_picker.is_none() && !self.browse_menu_open && self.tile_menu.is_none();
+        let page_has_the_keys =
+            !self.playback.is_open() && self.profile_picker.is_none() && !self.browse_menu_open && !self.about_open && self.tile_menu.is_none();
         if self.page.rows.is_empty() || !page_has_the_keys {
             return;
         }

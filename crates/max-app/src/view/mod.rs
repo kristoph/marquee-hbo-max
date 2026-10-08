@@ -1,3 +1,4 @@
+pub mod about;
 mod browse_menu;
 mod header;
 mod hero;
