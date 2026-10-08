@@ -53,10 +53,7 @@ impl App {
 }
 
 fn draw_about_line(ui: &mut egui::Ui, panel: Rect, intent: &mut Intent) {
-    let line = Rect::from_min_max(
-        Pos2::new(panel.left(), panel.bottom() - BROWSE_MENU_LINE - SPACE_ABOVE_LINES),
-        panel.max - Vec2::new(0.0, SPACE_ABOVE_LINES),
-    );
+    let line = Rect::from_min_max(Pos2::new(panel.left(), panel.bottom() - BROWSE_MENU_LINE), panel.max);
     let response = ui.interact(line, Id::new("menu-about"), Sense::click());
     points_to_when_hovered(ui, &response);
     if response.hovered() {
