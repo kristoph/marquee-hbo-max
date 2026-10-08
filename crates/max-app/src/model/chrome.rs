@@ -32,7 +32,7 @@ pub fn load_chrome(service: &Service) -> Result<ScreenChrome, Failure> {
     };
     let prepared = |source: &Option<String>, size: Vec2| prepare_image(source.as_ref()?, ICON_WIDTH, size);
     Ok(ScreenChrome {
-        logo: prepared(&chrome.logo, LOGO).or_else(|| file_uri(&paths::brand_logo())),
+        logo: prepared(&chrome.logo, LOGO),
         search_icon: prepared(&chrome.search_icon, Vec2::splat(ICON)),
         my_stuff_icon: prepared(&chrome.my_stuff_icon, Vec2::splat(ICON)),
         avatar: prepared(&chrome.avatar, Vec2::splat(AVATAR)),

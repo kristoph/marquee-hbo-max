@@ -21,7 +21,10 @@ const LOGO_AFTER_MENU_BUTTON: f32 = 16.0;
 const MY_STUFF_BEFORE_AVATAR: f32 = 22.0;
 const SEARCH_BEFORE_MY_STUFF: f32 = 24.0;
 const MENU_BAR_OFFSETS: [f32; 3] = [-0.28, 0.0, 0.28];
-const FALLBACK_LOGO_TEXT: f32 = 20.0;
+/// Shown until the service's own logo has been fetched, and whenever it cannot be.
+const BRAND_LOGO: &[u8] = include_bytes!("../../assets/cached-logo.png");
+const BRAND_LOGO_URI: &str = "bytes://cached-logo.png";
+const BRAND_LOGO_ASPECT: f32 = 199.0 / 112.0;
 const FALLBACK_MY_STUFF_TEXT: f32 = 24.0;
 
 #[derive(Clone, Copy)]
@@ -85,7 +88,8 @@ impl App {
                 Image::new(uri.as_str()).paint_at(ui, logo);
             }
             None => {
-                ui.painter().text(logo.left_center(), Align2::LEFT_CENTER, "HBO Max", bold(FALLBACK_LOGO_TEXT), TEXT);
+                let size = Vec2::new(logo.height() * BRAND_LOGO_ASPECT, logo.height());
+                Image::from_bytes(BRAND_LOGO_URI, BRAND_LOGO).paint_at(ui, Rect::from_min_size(logo.min, size));
             }
         }
         response
