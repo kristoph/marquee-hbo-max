@@ -81,7 +81,7 @@ impl App {
 fn tile_menu_panel(ui: &egui::Ui, lines: &[MenuLine], wanted_position: Pos2, window: Rect) -> Rect {
     let widest_label =
         lines.iter().map(|line| ui.painter().layout_no_wrap(line.label.to_string(), bold(BODY_TEXT), TEXT).size().x).fold(0.0, f32::max);
-    let width = (widest_label + icon_column() + SPACE_RIGHT_OF_LABEL).max(WIDTH);
+    let width = (widest_label + ICON_COLUMN + SPACE_RIGHT_OF_LABEL).max(WIDTH);
     let size = Vec2::new(width, lines.len() as f32 * LINE_HEIGHT + VERTICAL_PADDING * 2.0);
     let room = Rect::from_min_max(window.min + Vec2::splat(KEPT_INSIDE_WINDOW_BY), window.max - size - Vec2::splat(KEPT_INSIDE_WINDOW_BY));
     Rect::from_min_size(wanted_position.clamp(room.min, room.max.max(room.min)), size)
@@ -92,17 +92,15 @@ fn paint_menu_line(painter: &egui::Painter, line: &MenuLine, area: Rect) {
         painter.line_segment([area.left_top(), area.right_top()], Stroke::new(1.0, Color32::from_white_alpha(RULE)));
     }
     let raised = if line.watched.is_some() { LABEL_RAISED_OVER_PROGRESS } else { 0.0 };
-    let label_at = area.left_center() + Vec2::new(LABEL_INSET + icon_column(), -raised);
+    let label_at = area.left_center() + Vec2::new(LABEL_INSET + ICON_COLUMN, -raised);
     let font = if line.chosen { bold(BODY_TEXT) } else { regular(BODY_TEXT) };
     let label = painter.text(label_at, Align2::LEFT_CENTER, line.label, font, TEXT);
     if let Some(watched) = line.watched {
         let track = Rect::from_min_size(Pos2::new(label.left(), label.bottom() + PROGRESS_BELOW_LABEL), Vec2::new(PROGRESS_WIDTH, PROGRESS_HEIGHT));
         progress_bar(painter, track, watched, PROGRESS_HEIGHT / 2.0, Color32::from_white_alpha(PROGRESS_TRACK), TEXT);
     }
-    if theme::has_icons() {
-        let center = area.left_center() + Vec2::new(ICON_CENTER_FROM_LEFT, 0.0);
-        painter.text(center, Align2::CENTER_CENTER, line.icon, theme::icons(ICON_TEXT), TEXT);
-    }
+    let icon_center = area.left_center() + Vec2::new(ICON_CENTER_FROM_LEFT, 0.0);
+    painter.text(icon_center, Align2::CENTER_CENTER, line.icon, theme::icons(ICON_TEXT), TEXT);
     if line.chosen {
         tick(painter, area.right_center() - Vec2::new(TICK_FROM_RIGHT, 0.0), TICK_SIZE, Stroke::new(2.0, TEXT));
     }
@@ -128,13 +126,5 @@ fn pick(pick: Pick, menu: TileMenu, tile: &ScreenTile, intent: &mut Intent) {
         Pick::ToggleMyList => intent.account_change = change(AccountChangeKind::ToggleMyList),
         Pick::RemoveFromRow => intent.account_change = change(AccountChangeKind::RemoveFromRow),
         Pick::Rate(value) => intent.account_change = change(AccountChangeKind::Rate(value.to_string())),
-    }
-}
-
-fn icon_column() -> f32 {
-    if theme::has_icons() {
-        ICON_COLUMN
-    } else {
-        0.0
     }
 }

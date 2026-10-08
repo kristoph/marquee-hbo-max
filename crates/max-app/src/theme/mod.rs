@@ -2,7 +2,7 @@ mod fonts;
 pub mod icon;
 
 use eframe::egui::Color32;
-pub use fonts::{bold, has_icons, icons, install_fonts, regular};
+pub use fonts::{bold, icons, install_fonts, regular};
 
 pub const BACKGROUND: Color32 = Color32::BLACK;
 pub const PLACEHOLDER: Color32 = Color32::from_rgb(30, 30, 36);

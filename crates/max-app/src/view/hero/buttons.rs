@@ -22,7 +22,6 @@ const FOCUS_RING_GAP: f32 = 4.0;
 const FOCUS_RING_WIDTH: f32 = 2.5;
 const LIST_MARK_SIZE: f32 = 9.0;
 const SOUND_GLYPH: f32 = 22.0;
-const SOUND_WORD: f32 = 14.0;
 const HOVERED_PLAY_BUTTON: Color32 = Color32::from_gray(222);
 const HOVERED_SQUARE_BUTTON: u8 = 80;
 
@@ -80,13 +79,8 @@ impl App {
         let button = Rect::from_min_size(corner, Vec2::splat(BUTTON_HEIGHT));
         let response = self.square_hero_button(ui, scene, button, "hero-sound");
         let muted = self.hero.preview_muted;
-        match theme::has_icons() {
-            true => {
-                let glyph = if muted { icon::SOUND_OFF } else { icon::SOUND_ON };
-                scene.painter.text(button.center(), Align2::CENTER_CENTER, glyph, theme::icons(SOUND_GLYPH), TEXT)
-            }
-            false => scene.painter.text(button.center(), Align2::CENTER_CENTER, if muted { "Off" } else { "On" }, bold(SOUND_WORD), TEXT),
-        };
+        let glyph = if muted { icon::SOUND_OFF } else { icon::SOUND_ON };
+        scene.painter.text(button.center(), Align2::CENTER_CENTER, glyph, theme::icons(SOUND_GLYPH), TEXT);
         if response.clicked() {
             intent.toggle_preview_sound = true;
         }

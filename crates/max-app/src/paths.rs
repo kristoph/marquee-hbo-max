@@ -15,14 +15,6 @@ pub fn captured_navigation_menu() -> PathBuf {
     workspace::capture(NAVIGATION_MENU_CAPTURE)
 }
 
-pub fn typeface(file: &str) -> PathBuf {
-    workspace::file(UNPACKED_APP_ASSETS).join("assets").join(file)
-}
-
 pub fn brand_logo() -> PathBuf {
     workspace::file(UNPACKED_APP_ASSETS).join("assets/drawable/default/logo.png")
-}
-
-pub fn icon_font() -> PathBuf {
-    workspace::file(UNPACKED_APP_ASSETS).join("fontawesome-webfont.ttf")
 }
