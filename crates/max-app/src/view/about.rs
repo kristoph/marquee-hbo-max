@@ -10,8 +10,8 @@ use crate::{
 const HEADING: &str = "About";
 const PARAGRAPHS: [&str; 3] = [
     "This app is an independent effort by Kristoph Cichocki-Romanov (hello@kristoph.net).",
-    "It is not associated with Skydance Entertainment, Warner Bros. Discovery or HBO.",
-    "Its text is set in Noto Sans and its icons come from Font Awesome, both used under the SIL Open Font License 1.1.",
+    "It is not affiliated with, endorsed by or sponsored by Skydance Corporation, Warner Bros. Discovery, Inc. or Home Box Office, Inc.",
+    "HBO® and HBO Max® are registered trademarks of Home Box Office, Inc. Skydance™ and Warner Bros.™ are trademarks of their respective owners.",
 ];
 const VERSION: &str = concat!("Version ", env!("CARGO_PKG_VERSION"));
 const CLOSE: &str = "Close";
