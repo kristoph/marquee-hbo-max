@@ -6,6 +6,8 @@ use max_api::cms::Layout;
 
 pub const MARGIN: f32 = 30.0;
 pub const CORNER_RADIUS: f32 = 8.0;
+/// A wider window shows the page centred at this width, with nothing beside it.
+pub const MAX_CONTENT_WIDTH: f32 = 2560.0;
 pub const HEADING_TEXT: f32 = 16.667;
 pub const BODY_TEXT: f32 = 16.667;
 pub const SMALL_TEXT: f32 = 13.889;

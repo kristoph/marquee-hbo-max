@@ -1,22 +1,21 @@
-use eframe::egui::{self, scroll_area::ScrollBarVisibility, ScrollArea, Vec2};
+use eframe::egui::{self, scroll_area::ScrollBarVisibility, Rect, ScrollArea, UiBuilder, Vec2};
 
 use super::{search_bar, topics};
 use crate::{
     app::App,
     intent::Intent,
-    metrics::{hero, SPACE_ABOVE_FIRST_RAIL, SPACE_BELOW_PAGE},
+    metrics::{hero, MAX_CONTENT_WIDTH, SPACE_ABOVE_FIRST_RAIL, SPACE_BELOW_PAGE},
 };
 
 const HEADER_TURNS_SOLID_AFTER_SCROLLING: f32 = 8.0;
-const LARGEST_FRACTION_OF_WINDOW_FOR_HERO: f32 = 0.96;
 
 impl App {
     pub(crate) fn draw_page(&mut self, ui: &mut egui::Ui, intent: &mut Intent) {
         let window = ui.max_rect();
-        self.lay_grid_out_again(window.width());
-        self.page.width = window.width();
+        let content = centred_content(window);
+        self.lay_grid_out_again(content.width());
+        self.page.width = content.width();
         self.page.selected_artwork.set(None);
-        let hero_height = hero::FULL_HEIGHT.min(window.width() * 9.0 / 16.0).min(window.height() * LARGEST_FRACTION_OF_WINDOW_FOR_HERO);
         let pointer_moved = ui.input(|input| input.pointer.delta() != Vec2::ZERO);
 
         // The page is drawn through `&self`, so the search state it edits is lent out for the frame.
@@ -28,7 +27,10 @@ impl App {
         if let Some(offset) = self.page.scroll_to.take() {
             area = area.vertical_scroll_offset(offset);
         }
-        let page = area.show(ui, |ui| {
+        // The header and the menus span the window; only the page itself is kept to a width.
+        let mut page_ui = ui.new_child(UiBuilder::new().max_rect(content));
+        page_ui.set_clip_rect(content);
+        let page = area.show(&mut page_ui, |ui| {
             ui.spacing_mut().item_spacing.y = 0.0;
             let tabs_before_row = self.page.tabs.as_ref().map(|tabs| tabs.first_row);
             let mut nothing_drawn_yet = true;
@@ -49,7 +51,7 @@ impl App {
                 }
                 let leads_the_page = std::mem::take(&mut nothing_drawn_yet);
                 if leads_the_page && row.is_hero() {
-                    self.draw_hero(ui, row, hero_height, intent);
+                    self.draw_hero(ui, row, hero::FULL_HEIGHT, intent);
                     continue;
                 }
                 if leads_the_page {
@@ -81,5 +83,24 @@ impl App {
             self.page.selection_was_revealed_this_frame();
             ui.ctx().request_repaint();
         }
+    }
+}
+
+fn centred_content(window: Rect) -> Rect {
+    Rect::from_center_size(window.center(), Vec2::new(window.width().min(MAX_CONTENT_WIDTH), window.height()))
+}
+
+#[cfg(test)]
+mod tests {
+    use eframe::egui::Pos2;
+
+    use super::*;
+
+    #[test]
+    fn a_window_wider_than_the_page_shows_it_centred_and_a_narrower_one_in_full() {
+        let wide = Rect::from_min_size(Pos2::ZERO, Vec2::new(MAX_CONTENT_WIDTH + 640.0, 1000.0));
+        assert_eq!(centred_content(wide), Rect::from_min_size(Pos2::new(320.0, 0.0), Vec2::new(MAX_CONTENT_WIDTH, 1000.0)));
+        let narrow = Rect::from_min_size(Pos2::ZERO, Vec2::new(1600.0, 1000.0));
+        assert_eq!(centred_content(narrow), narrow);
     }
 }
