@@ -65,7 +65,9 @@ pub(super) fn paint_shading(scene: &HeroScene) {
     let clear = Color32::TRANSPARENT;
     let artwork_narrower_than_window = scene.artwork.left() > scene.bounds.left() + 1.0;
     let shade = if artwork_narrower_than_window { BACKGROUND } else { Color32::from_black_alpha(SIDE_SHADE_OVER_ARTWORK) };
-    let side = Rect::from_min_size(scene.artwork.min, Vec2::new(scene.artwork.width() * SIDE_SHADE_FRACTION_OF_ARTWORK, scene.bounds.height()));
+    // In a window narrower than the artwork, its left is out of sight and the shade starts at the window's edge.
+    let shown = scene.artwork.intersect(scene.bounds);
+    let side = Rect::from_min_size(shown.min, Vec2::new(shown.width() * SIDE_SHADE_FRACTION_OF_ARTWORK, scene.bounds.height()));
     gradient(&scene.painter, side, CornerColors::left_to_right(shade, clear));
     let foot_top = scene.bounds.top() + scene.bounds.height() * FOOT_SHADE_STARTS_AT_FRACTION;
     let foot = Rect::from_min_max(Pos2::new(scene.bounds.left(), foot_top), scene.bounds.right_bottom());

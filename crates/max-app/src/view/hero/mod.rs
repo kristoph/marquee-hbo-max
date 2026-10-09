@@ -16,6 +16,8 @@ use crate::{
 };
 
 const IN_VIEW_WHEN_FRACTION_VISIBLE: f32 = 0.5;
+const ARTWORK_ASPECT: f32 = 16.0 / 9.0;
+const FRACTION_OF_OVERFLOW_HIDDEN_ABOVE: f32 = 0.25;
 
 /// The hero takes up the page only as far as the first rail, which is drawn over the foot of
 /// its artwork: `flow` is the part it takes up and `bounds` all of it.
@@ -53,7 +55,6 @@ impl App {
         if !ui.is_rect_visible(bounds) {
             return;
         }
-        let artwork_width = height * 16.0 / 9.0;
         let index = self.hero.index.min(row.tiles.len() - 1);
         let visible = ui.clip_rect();
         let scene = HeroScene {
@@ -62,7 +63,7 @@ impl App {
             index,
             flow,
             bounds,
-            artwork: Rect::from_min_size(Pos2::new(bounds.right() - artwork_width, bounds.top()), Vec2::new(artwork_width, height)),
+            artwork: artwork_covering(bounds),
             visible,
             painter: ui.painter().with_clip_rect(visible.intersect(bounds)),
             selected,
@@ -75,5 +76,41 @@ impl App {
         self.paint_hero_text(ui, &scene);
         self.draw_hero_buttons(ui, &scene, intent);
         self.draw_hero_dots(ui, &scene, intent);
+    }
+}
+
+/// The artwork is as tall as the hero and, in a page wider than that makes it, as wide as the
+/// page: it then runs past the hero's foot, more of it hidden below than above. In a page
+/// narrower than the artwork its left is what goes out of sight.
+fn artwork_covering(bounds: Rect) -> Rect {
+    let width = bounds.width().max(bounds.height() * ARTWORK_ASPECT);
+    let size = Vec2::new(width, width / ARTWORK_ASPECT);
+    let hidden_above = (size.y - bounds.height()) * FRACTION_OF_OVERFLOW_HIDDEN_ABOVE;
+    Rect::from_min_size(Pos2::new(bounds.right() - size.x, bounds.top() - hidden_above), size)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn hero(width: f32) -> Rect {
+        Rect::from_min_size(Pos2::ZERO, Vec2::new(width, 900.0))
+    }
+
+    #[test]
+    fn the_artwork_fills_a_hero_of_its_own_shape() {
+        assert_eq!(artwork_covering(hero(1600.0)), hero(1600.0));
+    }
+
+    #[test]
+    fn a_narrower_page_hides_the_left_of_the_artwork() {
+        assert_eq!(artwork_covering(hero(1000.0)), Rect::from_min_size(Pos2::new(-600.0, 0.0), Vec2::new(1600.0, 900.0)));
+    }
+
+    #[test]
+    fn a_wider_page_is_covered_from_side_to_side() {
+        let artwork = artwork_covering(hero(2560.0));
+        assert_eq!((artwork.left(), artwork.width(), artwork.height()), (0.0, 2560.0, 1440.0));
+        assert!(artwork.top() < 0.0 && artwork.bottom() > 900.0);
     }
 }
